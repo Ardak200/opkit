@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -20,8 +21,8 @@ export class TasksController {
   constructor(private readonly tasks: TasksService) {}
 
   @Get()
-  findAll(@CurrentUser() user: AuthUser) {
-    return this.tasks.findAll(user.id);
+  findAll(@CurrentUser() user: AuthUser, @Query('q') q?: string) {
+    return this.tasks.findAll(user.id, q);
   }
 
   @Post()

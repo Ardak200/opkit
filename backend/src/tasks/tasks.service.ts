@@ -11,9 +11,12 @@ export class TasksService {
     private readonly gateway: TasksGateway,
   ) {}
 
-  async findAll(userId: string) {
+  async findAll(userId: string, q?: string) {
     return this.prisma.task.findMany({
-      where: { userId },
+      where: {
+        userId,
+        title: { contains: q, mode: 'insensitive' },
+      },
       orderBy: { createdAt: 'desc' },
     });
   }
