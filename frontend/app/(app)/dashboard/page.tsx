@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/store/auth.store';
-import { TaskBoard } from '@/components/TaskBoard';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/auth.store";
+import { TaskBoard } from "@/components/TaskBoard";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const token = useAuthStore((s) => s.token);
@@ -18,7 +19,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (initialized && token === null) {
-      router.push('/login');
+      router.push("/login");
     }
   }, [initialized, token, router]);
 
@@ -35,11 +36,21 @@ export default function DashboardPage() {
             <span className="text-lg font-semibold text-gray-900">OpKit</span>
           </div>
           <button
-            onClick={() => { logout(); router.push('/login'); }}
+            onClick={() => {
+              logout();
+              router.push("/login");
+            }}
             className="rounded-lg px-3 py-1.5 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
           >
             Выйти
           </button>
+          <Link
+            href="/profile"
+            className="rounded-lg px-3 py-1.5 text-sm text-gray-500 transition hover:bg-gray-100 
+  hover:text-gray-900"
+          >
+            Профиль
+          </Link>
         </div>
       </header>
 
