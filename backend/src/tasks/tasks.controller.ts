@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -21,8 +23,13 @@ export class TasksController {
   constructor(private readonly tasks: TasksService) {}
 
   @Get()
-  findAll(@CurrentUser() user: AuthUser, @Query('q') q?: string) {
-    return this.tasks.findAll(user.id, q);
+  findAll(
+    @CurrentUser() user: AuthUser,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('q') q?: string,
+  ) {
+    return this.tasks.findAll({ userId: user.id, q, page, limit });
   }
 
   @Post()

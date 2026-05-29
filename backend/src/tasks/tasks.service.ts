@@ -11,14 +11,42 @@ export class TasksService {
     private readonly gateway: TasksGateway,
   ) {}
 
-  async findAll(userId: string, q?: string) {
-    return this.prisma.task.findMany({
-      where: {
-        userId,
-        title: { contains: q, mode: 'insensitive' },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+  async findAll({
+    userId,
+    q,
+    page,
+    limit,
+  }: {
+    userId: string;
+    q?: string;
+    page: number;
+    limit: number;
+  }) {
+    const where = {
+      userId,
+      ...(q ? { title: { contains: q, mode: 'insensitive' as const } } : {}),
+    };
+
+    const [tasks, total] = await Promise.all([
+      this.prisma.task.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+
+      this.prisma.task.count({
+        where,
+      }),
+    ]);
+
+    return {
+      data: tasks,
+      total,
+      page,
+      limit,
+      pages: Math.ceil(total / limit),
+    };
   }
 
   async create(userId: string, dto: CreateTaskDto) {
