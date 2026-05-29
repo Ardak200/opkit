@@ -38,14 +38,14 @@ export default function ProfilePage() {
   if (!initialized || !token) return null;
 
   return (
-    <div className="min-h-full">
-      <header className="border-b border-gray-200 bg-white">
+    <div className="min-h-full bg-gray-50 dark:bg-slate-900">
+      <header className="border-b border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600">
               <span className="text-sm font-bold text-white">O</span>
             </div>
-            <span className="text-lg font-semibold text-gray-900">OpKit</span>
+            <span className="text-lg font-semibold text-gray-900 dark:text-slate-100">OpKit</span>
           </div>
           <div className="flex items-center gap-2">
             <Link
@@ -70,33 +70,26 @@ export default function ProfilePage() {
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-8">
-        <h2 className="mb-6 text-xl font-bold text-gray-900">Профиль</h2>
+        <h2 className="mb-6 text-xl font-bold text-gray-900 dark:text-slate-100">Профиль</h2>
 
         {isLoading ? (
-          <p className="text-sm text-gray-400">Загрузка...</p>
+          <p className="text-sm text-gray-400 dark:text-slate-500">Загрузка...</p>
         ) : (
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
-            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100">
-              <span className="text-2xl font-bold text-blue-600">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-slate-800 dark:ring-slate-700">
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 dark:bg-blue-900/40">
+              <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                 {user?.email[0].toUpperCase()}
               </span>
             </div>
             <div className="space-y-4">
               <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
-                  Email
-                </p>
-                <p className="mt-1 text-sm font-medium text-gray-900">
-                  {user?.email}
-                </p>
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500">Email</p>
+                <p className="mt-1 text-sm font-medium text-gray-900 dark:text-slate-100">{user?.email}</p>
               </div>
               <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
-                  Дата регистрации
-                </p>
-                <p className="mt-1 text-sm font-medium text-gray-900">
-                  {user &&
-                    new Date(user.createdAt).toLocaleDateString("ru-RU", {})}
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500">Дата регистрации</p>
+                <p className="mt-1 text-sm font-medium text-gray-900 dark:text-slate-100">
+                  {user && new Date(user.createdAt).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" })}
                 </p>
               </div>
               <div>
