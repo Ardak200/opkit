@@ -35,22 +35,20 @@ export default function DashboardPage() {
             </div>
             <span className="text-lg font-semibold text-gray-900">OpKit</span>
           </div>
-          <button
-            onClick={() => {
-              logout();
-              router.push("/login");
-            }}
-            className="rounded-lg px-3 py-1.5 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
-          >
-            Выйти
-          </button>
-          <Link
-            href="/profile"
-            className="rounded-lg px-3 py-1.5 text-sm text-gray-500 transition hover:bg-gray-100 
-  hover:text-gray-900"
-          >
-            Профиль
-          </Link>
+          <div className="flex items-center gap-1">
+            <Link
+              href="/profile"
+              className="rounded-lg px-3 py-1.5 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
+            >
+              Профиль
+            </Link>
+            <button
+              onClick={() => { logout(); router.push("/login"); }}
+              className="rounded-lg px-3 py-1.5 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
+            >
+              Выйти
+            </button>
+          </div>
         </div>
       </header>
 
