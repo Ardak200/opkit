@@ -11,7 +11,6 @@ type TaskStatus = "TODO" | "IN_PROGRESS" | "DONE";
 interface Task {
   id: string;
   title: string;
-  description?: string;
   status: TaskStatus;
 }
 
@@ -38,6 +37,8 @@ export function TaskBoard() {
   const [adding, setAdding] = useState(false);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState("");
 
   const currentPage = Number(searchParams.get("page") ?? 1);
   const currentLimit = Number(searchParams.get("limit") ?? 10);
@@ -81,6 +82,23 @@ export function TaskBoard() {
       setConfirmId(null);
     },
   });
+
+  const updateTitle = useMutation({
+    mutationFn: ({ id, title }: { id: string; title: string }) =>
+      api.patch(`/tasks/${id}`, { title }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+
+  function startEditing(task: Task) {
+    setEditingId(task.id);
+    setEditingTitle(task.title);
+  }
+
+  function commitEdit(id: string) {
+    const trimmed = editingTitle.trim();
+    if (trimmed) updateTitle.mutate({ id, title: trimmed });
+    setEditingId(null);
+  }
 
   useEffect(() => {
     const socket = io("http://localhost:3001", { transports: ["websocket"] });
@@ -219,9 +237,38 @@ export function TaskBoard() {
                     key={task.id}
                     className="group rounded-xl border border-gray-100 bg-gray-50 p-3.5 transition hover:border-gray-200 hover:bg-white hover:shadow-sm dark:border-slate-700 dark:bg-slate-700/50 dark:hover:border-slate-600 dark:hover:bg-slate-700"
                   >
-                    <p className="text-sm font-medium text-gray-900 dark:text-slate-100">{task.title}</p>
-                    {task.description && (
-                      <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">{task.description}</p>
+                    {editingId === task.id ? (
+                      <div className="flex items-center gap-1">
+                        <input
+                          autoFocus
+                          value={editingTitle}
+                          onChange={(e) => setEditingTitle(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") commitEdit(task.id);
+                            if (e.key === "Escape") setEditingId(null);
+                          }}
+                          className="min-w-0 flex-1 rounded border border-blue-400 bg-white px-1.5 py-0.5 text-sm font-medium text-gray-900 outline-none focus:ring-2 focus:ring-blue-500/20 dark:bg-slate-800 dark:text-slate-100"
+                        />
+                        <button
+                          onMouseDown={(e) => { e.preventDefault(); commitEdit(task.id); }}
+                          className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-green-600 transition hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/30"
+                        >
+                          ✓
+                        </button>
+                        <button
+                          onMouseDown={(e) => { e.preventDefault(); setEditingId(null); }}
+                          className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-gray-400 transition hover:bg-gray-100 dark:text-slate-500 dark:hover:bg-slate-700"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ) : (
+                      <p
+                        onClick={() => startEditing(task)}
+                        className="cursor-pointer text-sm font-medium text-gray-900 hover:text-blue-600 dark:text-slate-100 dark:hover:text-blue-400"
+                      >
+                        {task.title}
+                      </p>
                     )}
 
                     <div className="mt-3 flex flex-wrap items-center gap-1.5">
