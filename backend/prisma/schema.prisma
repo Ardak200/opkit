@@ -1,13 +1,6 @@
-// Prisma 7 schema.
-// - URL берётся из prisma.config.ts (там dotenv подгружает .env).
-// - Generator prisma-client (новый, не prisma-client-js) — кладёт сгенерированный
-//   клиент в указанный output. Импортируем оттуда (с обязательным /client в конце).
-
 generator client {
   provider     = "prisma-client"
   output       = "../src/generated/prisma"
-  // moduleFormat = cjs → генерируется код с require/__dirname вместо import.meta.url.
-  // Нужно для NestJS в стандартной CommonJS-конфигурации (tsconfig module: commonjs).
   moduleFormat = "cjs"
 }
 
@@ -32,12 +25,11 @@ model User {
 }
 
 model Task {
-  id          String     @id @default(uuid())
-  title       String
-  description String?
-  status      TaskStatus @default(TODO)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id        String     @id @default(uuid())
+  title     String
+  status    TaskStatus @default(TODO)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
