@@ -3,12 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../generated/prisma/client';
 
-// PrismaService = PrismaClient + lifecycle хуки NestJS.
-//
-// В Prisma 7 PrismaClient требует driver adapter — клиент сам не общается с БД,
-// этим занимается отдельный пакет @prisma/adapter-pg (под капотом обычный pg-драйвер).
-// DATABASE_URL подгружается через ConfigService (он, в свою очередь, читает .env
-// через ConfigModule из app.module.ts).
 @Injectable()
 export class PrismaService
   extends PrismaClient

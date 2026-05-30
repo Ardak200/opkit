@@ -39,8 +39,6 @@ export function TaskBoard() {
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Читаем page и limit из URL, с дефолтами если параметров нет
-  // useSearchParams().get() возвращает null когда параметра нет в URL
   const currentPage = Number(searchParams.get("page") ?? 1);
   const currentLimit = Number(searchParams.get("limit") ?? 10);
 
@@ -102,14 +100,12 @@ export function TaskBoard() {
     return () => { socket.disconnect(); };
   }, [qc, searchQuery, currentPage, currentLimit]);
 
-  // Меняем страницу — обновляем URL, сохраняя остальные параметры
   function goToPage(page: number) {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", String(page));
     router.push(`?${params}`);
   }
 
-  // Меняем лимит — сбрасываем на первую страницу
   function changeLimit(limit: number) {
     const params = new URLSearchParams(searchParams.toString());
     params.set("limit", String(limit));
@@ -123,7 +119,6 @@ export function TaskBoard() {
 
   return (
     <div>
-      {/* Заголовок */}
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100">Мои задачи</h2>
@@ -170,7 +165,6 @@ export function TaskBoard() {
         )}
       </div>
 
-      {/* Поиск + пагинация + лимит */}
       <div className="mb-5 flex items-center justify-between gap-4">
         <input
           value={searchQuery}
@@ -207,7 +201,6 @@ export function TaskBoard() {
         </div>
       </div>
 
-      {/* Канбан колонки */}
       <div className={`mb-5 grid grid-cols-3 gap-5 transition-opacity ${isPlaceholderData ? "opacity-60" : "opacity-100"}`}>
         {COLUMNS.map((col) => {
           const colTasks = tasks.filter((t) => t.status === col.status);

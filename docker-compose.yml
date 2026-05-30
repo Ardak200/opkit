@@ -1,24 +1,16 @@
-# Docker Compose — поднимает зависимости (БД и Redis) одной командой:
-#   docker compose up -d        # запустить в фоне
-#   docker compose down         # остановить
-#   docker compose logs -f db   # смотреть логи postgres
-#
-# Прелесть: не нужно ставить postgres/redis на mac нативно.
-# Данные хранятся в named volumes — переживают перезапуск контейнера.
-
 services:
   db:
-    image: postgres:16-alpine          # alpine = облегчённый linux, образ меньше
+    image: postgres:16-alpine
     container_name: opkit_postgres
-    restart: unless-stopped            # автоперезапуск если упал, но не если ты его руками остановил
+    restart: unless-stopped
     environment:
       POSTGRES_USER: opkit
       POSTGRES_PASSWORD: opkit
       POSTGRES_DB: opkit
     ports:
-      - "5432:5432"                    # пробрасываем порт на хост — Prisma из NestJS будет ходить по localhost:5432
+      - "5432:5432"
     volumes:
-      - opkit_pg_data:/var/lib/postgresql/data   # данные сохраняются между перезапусками
+      - opkit_pg_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U opkit -d opkit"]
       interval: 5s

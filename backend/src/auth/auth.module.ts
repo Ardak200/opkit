@@ -9,16 +9,11 @@ import { JwtStrategy } from './jwt.strategy';
 @Module({
   imports: [
     PassportModule,
-    // registerAsync — потому что нужны переменные из ConfigService,
-    // которые доступны только после инициализации ConfigModule.
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         secret: config.getOrThrow<string>('JWT_SECRET'),
-        // expiresIn принимает формат ms-пакета ("7d", "1h", "30m" итд), но
-        // его тип очень узкий template literal — кастуем, чтобы можно было
-        // подавать любую валидную строку из .env.
         signOptions: {
           expiresIn: config.getOrThrow<string>('JWT_EXPIRES_IN') as unknown as number,
         },
@@ -26,7 +21,6 @@ import { JwtStrategy } from './jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  // JwtStrategy регистрируется как провайдер → passport находит её по имени 'jwt'.
   providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}
