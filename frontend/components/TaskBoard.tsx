@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { io } from "socket.io-client";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -44,7 +44,7 @@ export function TaskBoard() {
   const currentPage = Number(searchParams.get("page") ?? 1);
   const currentLimit = Number(searchParams.get("limit") ?? 10);
 
-  const { data: tasksResponse } = useQuery<TasksResponse>({
+  const { data: tasksResponse, isPlaceholderData } = useQuery<TasksResponse>({
     queryKey: ["tasks", searchQuery, currentPage, currentLimit],
     queryFn: () => {
       const params = new URLSearchParams({
@@ -54,6 +54,7 @@ export function TaskBoard() {
       });
       return api.get<TasksResponse>(`/tasks?${params}`);
     },
+    placeholderData: keepPreviousData,
   });
 
   const tasks = tasksResponse?.data ?? [];
@@ -120,17 +121,15 @@ export function TaskBoard() {
     if (newTitle.trim()) createTask.mutate(newTitle.trim());
   }
 
-  const doneTasks = tasks.filter((t) => t.status === "DONE").length;
-
   return (
     <div>
       {/* Заголовок */}
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100">Мои задачи</h2>
-          {total > 0 && (
-            <p className="mt-0.5 text-sm text-gray-500 dark:text-slate-400">{total} задач всего</p>
-          )}
+          <p className={`mt-0.5 text-sm text-gray-500 dark:text-slate-400 ${total === 0 ? "invisible" : ""}`}>
+            {total} задач всего
+          </p>
         </div>
 
         {adding ? (
@@ -209,7 +208,7 @@ export function TaskBoard() {
       </div>
 
       {/* Канбан колонки */}
-      <div className="mb-5 grid grid-cols-3 gap-5">
+      <div className={`mb-5 grid grid-cols-3 gap-5 transition-opacity ${isPlaceholderData ? "opacity-60" : "opacity-100"}`}>
         {COLUMNS.map((col) => {
           const colTasks = tasks.filter((t) => t.status === col.status);
           return (
