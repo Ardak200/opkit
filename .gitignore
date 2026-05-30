@@ -7,3 +7,5 @@ dist
 *.log
 backend/src/generated/
 .claude/
+CLAUDE.md
+AGENTS.md
